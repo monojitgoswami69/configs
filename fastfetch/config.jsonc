@@ -20,13 +20,13 @@
         ],
         "key": {
             
-            "paddingLeft": 12
+            "paddingLeft": 5
         }
     },
     "modules": [
         {
             "type": "custom",
-            "format": "      ┌{$1} {#1}System Information{#} {$1}┐"
+            "format": "┌{$1} {#1}System Information{#} {$1}┐"
         },
         "break",
         {
@@ -56,7 +56,8 @@
         },
             "break",
         {
-            "type": "de",
+            "type": "wm",
+            "format" : "{pretty-name}",
             "key": " DE",
             "keyColor": "blue"
         },
@@ -84,18 +85,6 @@
         {
             "type": "cpu",
             "key": "├󰻠 CPU",
-            "keyColor": "green",
-            "temp": true,
-            "freqNdigits": 1
-        },
-        {
-            "type": "memory",
-            "key": "├󰑭 RAM",
-            "keyColor": "green"
-        },
-        {
-            "type": "disk",
-            "key": "├ Disk",
             "keyColor": "green"
         },
         {
@@ -104,14 +93,25 @@
             "keyColor": "green"
         },
         {
+            "type": "memory",
+            "key": "├󰑭 RAM",
+            "keyColor": "green"
+        },
+        {
+            "type": "disk",
+            "key": "└ Disk",
+            "keyColor": "green"
+        },
+        
+       /* {
             "type": "display",
             "key": "└󰍹 Display(s)",
             "keyColor": "green"
-        },
+        },*/
             "break",
         {
             "type": "custom",
-            "format": "      └{$1}────────────────────{$1}┘"
-        },
+            "format": "└{$1}────────────────────{$1}┘"
+        }
     ]
 }
