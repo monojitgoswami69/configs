@@ -155,8 +155,6 @@ Functions
   up N              - Move up N directories (default 1)
   extract FILE      - Extract compressed file by extension
   alias-help        - Show this help
-  prompt_git        - Show current git ref in prompt
-  parse_git_branch  - Internal helper for git ref
 EOF
 }
 
