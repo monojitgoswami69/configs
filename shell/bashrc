@@ -1,0 +1,162 @@
+#
+# ~/.bashrc 
+#
+
+[[ $- != *i* ]] && return
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+#PS1='[\u@\h \W]\$ '
+parse_git_branch() {
+  # Print current git ref if inside a repo; tag/short SHA for detached HEAD
+  git rev-parse --is-inside-work-tree >/dev/null 2>&1 || return
+  local ref
+  ref=$(git symbolic-ref --short -q HEAD 2>/dev/null || git describe --tags --always 2>/dev/null)
+  printf '%s' "$ref"
+}
+
+# Show formatted git ref only when available
+prompt_git() {
+  local ref
+  ref=$(parse_git_branch)
+  if [[ -n $ref ]]; then
+    printf ' (%s)' "$ref"
+  fi
+}
+
+PS1='\[\e[32m\]\u@\h \[\e[34m\]\W\[\e[33m\]$(prompt_git)\[\e[0m\]\$ '
+
+#==================================================
+# Aliases
+#==================================================
+
+# Safety and convenience
+alias cp='cp -iv'          
+alias mv='mv -iv'
+alias rm='rm -iv'
+alias mkdir='mkdir -pv'    
+alias lsa='ls -A'
+alias src='source ~/.bashrc'
+
+# Quick directory jumps
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
+# Git shortcuts
+alias gpl='git pull'
+alias gco='git checkout'
+alias gb='git branch'
+alias gc='git clone'
+alias gs='git status'
+alias ga='git add'
+alias gcm='git commit -m'
+alias gcam='git commit -am'
+alias gp='git push'
+alias gl='git log --oneline --graph --decorate'
+alias gd='git diff'
+
+# Pacman / yay
+alias pi='sudo pacman -S --noconfirm'
+alias pr='sudo pacman -Rns --noconfirm'
+alias pu='sudo pacman -Syu --noconfirm'
+alias ins='yay -S --noconfirm'
+alias uns='yay -Rns --noconfirm'
+alias upd='yay -Syu --noconfirm && flatpak update -y'
+alias install='yay -S --noconfirm'
+alias uninstall='yay -Rns --noconfirm'
+alias update='yay -Syu --noconfirm && flatpak update -y'
+
+#==================================================
+# Functions
+#==================================================
+
+# Extract compressed files easily
+extract() {
+  if [ -f "$1" ]; then
+    case "$1" in
+      *.tar.bz2)   tar xjf "$1" ;;
+      *.tar.gz)    tar xzf "$1" ;;
+      *.tar.xz)    tar xf "$1" ;;
+      *.bz2)       bunzip2 "$1" ;;
+      *.rar)       unrar x "$1" ;;
+      *.gz)        gunzip "$1" ;;
+      *.tar)       tar xf "$1" ;;
+      *.tbz2)      tar xjf "$1" ;;
+      *.tgz)       tar xzf "$1" ;;
+      *.zip)       unzip "$1" ;;
+      *.7z)        7z x "$1" ;;
+      *) echo "'$1' cannot be extracted via extract()" ;;
+    esac
+  else
+    echo "'$1' is not a valid file"
+  fi
+}
+
+# Move up N directories (usage: up <N>)
+up() {
+  local n=${1:-1}
+  if ! [[ $n =~ ^[0-9]+$ ]]; then
+    echo "usage: up <non-negative integer>" >&2
+    return 1
+  fi
+  local d=""
+  for ((i=0; i<n; i++)); do d+="../"; done
+  cd "$d" || return
+}
+
+# Show categorized aliases and helpers
+alias-help() {
+  cat <<'EOF'
+Aliases
+=======
+Navigation:
+  ..     -> cd ..
+  ...    -> cd ../..
+  ....   -> cd ../../..
+  lsa    -> ls -A
+
+Safety:
+  cp     -> cp -iv
+  mv     -> mv -iv
+  rm     -> rm -iv
+  mkdir  -> mkdir -pv
+  src    -> source ~/.bashrc
+
+Git:
+  gpl    -> git pull
+  gco    -> git checkout
+  gb     -> git branch
+  gc     -> git clone
+  gs     -> git status
+  ga     -> git add
+  gcm    -> git commit -m
+  gcam   -> git commit -am
+  gp     -> git push
+  gl     -> git log --oneline --graph --decorate
+  gd     -> git diff
+
+Package management:
+  pacman:
+    pi   -> sudo pacman -S --noconfirm
+    pr   -> sudo pacman -Rns --noconfirm
+    pu   -> sudo pacman -Syu --noconfirm
+  yay:
+    install   -> yay -S --noconfirm
+    uninstall -> yay -Rns --noconfirm
+    update    -> yay -Syu --noconfirm && flatpak update -y
+    (short) ins/uns/upd retained for compatibility
+
+Misc:
+  ls     -> ls --color=auto
+  grep   -> grep --color=auto
+
+Functions
+=========
+  up N              - Move up N directories (default 1)
+  extract FILE      - Extract compressed file by extension
+  alias-help        - Show this help
+  prompt_git        - Show current git ref in prompt
+  parse_git_branch  - Internal helper for git ref
+EOF
+}
+
